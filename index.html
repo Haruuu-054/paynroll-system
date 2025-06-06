@@ -380,7 +380,7 @@
             return;
         }
 
-        const appscript = "https://script.google.com/macros/s/AKfycbzgwZ4lNCQGIarWhIF5eVqXdpRpm3-cCIiYJleZojhq10qb_Z1W6_E5JzfiV1emDEvdIA/exec";
+        const scriptURL = "https://script.google.com/macros/s/AKfycbzgwZ4lNCQGIarWhIF5eVqXdpRpm3-cCIiYJleZojhq10qb_Z1W6_E5JzfiV1emDEvdIA/exec";
         fetch(scriptURL,{
             method: 'POST',
             body:JSON.stringify({email:email}),
