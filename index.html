@@ -369,32 +369,56 @@
     </footer>
 </body>
 <script>
-    document.getElementById('emailForm').addEventListener('submit', function (e){
-        e.preventDefault();
+    document.getElementById('emailForm').addEventListener('submit', function (e) {
+  e.preventDefault();
 
-        const email = document.getElementById('emailInput').value;
-        const termschecked = document.getElementById('terms').checked;
+  const email = document.getElementById('emailInput').value;
+  const termsChecked = document.getElementById('terms').checked;
 
-        if(!termschecked){
-            alert('Please agree to our terms and conditions');
-            return;
-        }
+  // Validate form
+  if (!termsChecked) {
+    alert('Please agree to our terms and conditions');
+    return;
+  }
 
-        const scriptURL = "https://script.google.com/macros/s/AKfycbzgwZ4lNCQGIarWhIF5eVqXdpRpm3-cCIiYJleZojhq10qb_Z1W6_E5JzfiV1emDEvdIA/exec";
-        fetch(scriptURL,{
-            method: 'POST',
-            body:JSON.stringify({email:email}),
-            headers: {'Content-Type':'application/json'}
-        })
-        .then(response=> response.txt())
-        .then(result=>{
-            alert(result);
-            document.getElementById('emailForm').reset();
-        })
-        .catch(error=>{
-            console.error('Error:', error);
-            alert("There was an error submitting your email. Please Try again")
-        });
-    });
+  if (!email) {
+    alert('Please enter your email address');
+    return;
+  }
+
+  const scriptURL = "https://script.google.com/macros/s/AKfycbzgwZ4lNCQGIarWhIF5eVqXdpRpm3-cCIiYJleZojhq10qb_Z1W6_E5JzfiV1emDEvdIA/exec";
+  
+  // Show loading state
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  const originalBtnText = submitBtn.textContent;
+  submitBtn.textContent = "Sending...";
+  submitBtn.disabled = true;
+
+  fetch(scriptURL, {
+    method: 'POST',
+    body: JSON.stringify({ email: email }),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === "success") {
+      alert(data.message);
+      document.getElementById('emailForm').reset();
+    } else {
+      throw new Error(data.message);
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert("There was an error submitting your form: " + error.message);
+  })
+  .finally(() => {
+    // Reset button state
+    submitBtn.textContent = originalBtnText;
+    submitBtn.disabled = false;
+  });
+});
 </script>
 </html>
