@@ -381,7 +381,21 @@
             return;
         }
 
-        const appscript = ""
-    })
+        const appscript = "https://script.google.com/macros/s/AKfycbzgwZ4lNCQGIarWhIF5eVqXdpRpm3-cCIiYJleZojhq10qb_Z1W6_E5JzfiV1emDEvdIA/exec";
+        fetch(scriptURL,{
+            method: 'POST',
+            body:JSON.stringify({email:email}),
+            headers: {'Content-Type':'application/json'}
+        })
+        .then(response=> response.txt())
+        .then(result=>{
+            alert(result);
+            document.getElementById('emailForm').reset();
+        })
+        .catch(error=>{
+            console.error('Error:', error);
+            alert("There was an error submitting your email. Please Try again")
+        });
+    });
 </script>
 </html>
