@@ -72,7 +72,7 @@
                 </div>
                 <div class="bg-[#8f0000] text-white p-4">
                     <h2 class="text-2xl md:text-3xl font-bold text-center">EDUCATION. EMPOWERMENT. EXCELLENCE.</h2>
-                    <img src="university-landing-page/images/background.jpg" alt="University Students" class="w-full h-auto mt-4">
+                    <img src="/src/university-landing-page/images/background.jpg" alt="University Students" class="w-full h-auto mt-4">
                 </div>
             </div>
         </div>
@@ -369,7 +369,7 @@
     </footer>
 </body>
 <script>
-    document.getElementById('emailForm').addEventListener('submit', function (e) {
+  document.getElementById('emailForm').addEventListener('submit', async function(e) {
   e.preventDefault();
 
   const email = document.getElementById('emailInput').value;
@@ -380,41 +380,39 @@
     return;
   }
 
-  // Show loading state
   const submitBtn = e.target.querySelector('button[type="submit"]');
-  const originalBtnText = submitBtn.textContent;
-  submitBtn.textContent = "Sending...";
   submitBtn.disabled = true;
+  submitBtn.textContent = "Sending...";
 
-  // Use URL parameters instead of JSON body
-  const scriptURL = "https://script.google.com/macros/s/AKfycbwZDqHunoZeCWYWY80NJU_CYxbAnb3k8_mCyyVJqA5W81psIESbedtwdnC2IEjBuCDYiQ/exec" + encodeURIComponent(email);
+  try {
+    const formData = new URLSearchParams();
+    formData.append("email", email);
 
-  // Use this alternative approach
-  fetch(scriptURL, {
-    redirect: "follow",
-    method: "GET", // Changed from POST to GET
-    headers: {
-      "Content-Type": "text/plain;charset=utf-8",
+    const response = await fetch('https://script.google.com/macros/s/AKfycbwL7EwAA9ETCeoURXmIHhNSQWB-rJC50Xcb2Js34D8Sr0xmtEHlPNyx2P6FBBVC2btNiQ/exec', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: formData.toString()
+    });
+
+    const result = await response.json();
+
+    if (result.error) {
+      throw new Error(result.error);
     }
-  })
-  .then(res => {
-    if (res.redirected) {
-      window.location.href = res.url;
-    }
-    return res.text();
-  })
-  .then(text => {
-    alert("Form submitted successfully! Check your email.");
+
+    alert(result.message);
     document.getElementById('emailForm').reset();
-  })
-  .catch(err => {
-    console.error('Error:', err);
-    alert("Submission failed. Please try again later.");
-  })
-  .finally(() => {
-    submitBtn.textContent = originalBtnText;
+  } catch (error) {
+    console.error('Error:', error);
+    alert("Submission failed: " + error.message);
+  } finally {
     submitBtn.disabled = false;
-  });
+    submitBtn.textContent = "Sign up";
+  }
 });
+
 </script>
+
 </html>
